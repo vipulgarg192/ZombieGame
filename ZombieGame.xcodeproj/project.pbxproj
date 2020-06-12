@@ -15,6 +15,7 @@
 		106E52A5248EF346002B4E5B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 106E52A3248EF346002B4E5B /* Main.storyboard */; };
 		106E52A7248EF348002B4E5B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 106E52A6248EF348002B4E5B /* Assets.xcassets */; };
 		106E52AA248EF348002B4E5B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 106E52A8248EF348002B4E5B /* LaunchScreen.storyboard */; };
+		10B880812493EACA00D422E3 /* ZombieMovePractice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B880802493EACA00D422E3 /* ZombieMovePractice.swift */; };
 		10EA08A32491F3B100C9FE47 /* MathUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10EA08A22491F3B100C9FE47 /* MathUtils.swift */; };
 /* End PBXBuildFile section */
 
@@ -29,6 +30,7 @@
 		106E52A6248EF348002B4E5B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		106E52A9248EF348002B4E5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		106E52AB248EF348002B4E5B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10B880802493EACA00D422E3 /* ZombieMovePractice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZombieMovePractice.swift; sourceTree = "<group>"; };
 		10EA08A22491F3B100C9FE47 /* MathUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathUtils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -72,6 +74,7 @@
 				106E52A8248EF348002B4E5B /* LaunchScreen.storyboard */,
 				106E52AB248EF348002B4E5B /* Info.plist */,
 				10EA08A22491F3B100C9FE47 /* MathUtils.swift */,
+				10B880802493EACA00D422E3 /* ZombieMovePractice.swift */,
 			);
 			path = ZombieGame;
 			sourceTree = "<group>";
@@ -151,6 +154,7 @@
 			files = (
 				106E52A0248EF346002B4E5B /* GameScene.swift in Sources */,
 				10EA08A32491F3B100C9FE47 /* MathUtils.swift in Sources */,
+				10B880812493EACA00D422E3 /* ZombieMovePractice.swift in Sources */,
 				106E52A2248EF346002B4E5B /* GameViewController.swift in Sources */,
 				106E529A248EF346002B4E5B /* AppDelegate.swift in Sources */,
 			);

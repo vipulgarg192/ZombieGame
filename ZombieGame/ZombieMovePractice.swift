@@ -1,4 +1,12 @@
 //
+//  ZombieMovePractice.swift
+//  ZombieGame
+//
+//  Created by vipul garg on 2020-06-12.
+//  Copyright © 2020 VipulGarg. All rights reserved.
+//
+
+//
 //  GameScene.swift
 //  ZombieGame
 //
@@ -9,7 +17,7 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class ZombieMoviePractice: SKScene {
     
    var background = SKSpriteNode(imageNamed:"background1")
    let zombie = SKSpriteNode(imageNamed:"zombie1")
@@ -24,8 +32,6 @@ class GameScene: SKScene {
     
     
     let playableRect: CGRect
-    
-    var destinationLocation = CGPoint.zero
     
 //    var lastPostion : Int = 0
 //    var newPostion  : Int = 0
@@ -60,53 +66,92 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         debugDrawPlayableArea()
+        // working
+//        physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
+
         backgroundColor = SKColor.purple
+        // this is to bring the background into center
+//        background.position =   CGPoint(x: size.width/2, y: size.height/2)
+//        background.zRotation = CGFloat(M_PI) / 8
+//        background.anchorPoint = CGPoint(x: 0.5, y: 0.5) // default
+//        background.zPosition = -1
+//        addChild(background)
         createBackground()
         
          // this is to bring the zombie into center
          zombie.position =   CGPoint(x: size.width/2, y: size.height/2)
          background.zRotation = +10
          zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5) // default
+//       zombie.zPosition = -1  this is to set z postion which means at which level of the stack of screen we wants to put it on
          addChild(zombie)
-//         zombie.run(SKAction.repeatForever(zombieAnimation))
+         zombie.run(SKAction.repeatForever(zombieAnimation))
+        
+//        this will create a frame boarder of the scene
+//        zombie.physicsBody = SKPhysicsBody(rectangleOf: zombie.size)
+        
+//        run(SKAction.repeatForever(
+//          SKAction.sequence([
+//            SKAction.run(spawnEnemy),
+//            SKAction.wait(forDuration: 1.0)
+//            ])
+//        ))
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //Working
+//        if let touch = touches.first {
+//            if zombie.contains(touch.location(in: self)) {
+//                zombieIsTouched = true
+//                zombie.size = CGSize(width: zombie.size.width*2, height: zombie.size.height*2)
+////                 zombie.setScale(2)  this is used for increasing the size
+//            }
+//        }
+
         for touch in touches {
             let location = touch.location(in: self)
-            moveZombieToward(location : location)
-            destinationLocation = location
-            startZombieAnimation()
+            amountToMove(location : location)
         }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        for touch in touches {
-//            let location = touch.location(in: self)
-//            moveZombieToward(location : location)
-//        }
+        if (zombieIsTouched){
+            zombie.size = CGSize(width: zombie.size.width/2, height: zombie.size.height/2)
+            zombieIsTouched = false
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if (zombieIsTouched == true) {
+            zombie.position = touches.first?.location(in: self) as! CGPoint
+        }
         
+        guard let touch = touches.first else {
+        return
+        }
+//        let touchLocation = touch.location(in: self)
+//        amountToMove(location: touchLocation)
     }
     
     override func update(_ currentTime: TimeInterval) {
-        if lastUpdateTime > 0 {
-         dt = currentTime - lastUpdateTime
-        } else {
-         dt = 0
-        }
-        lastUpdateTime = currentTime
-//        move(sprite: zombie, velocity: velocity)
+        // working
+//        print("new",newPostion)
+//        newPostion  = Int(zombie.position.x)
+//        print("last",lastPostion)
+//
+//        if moveForward{
+//            zombie.position = CGPoint(x: zombie.position.x + 8,
+//                                           y: zombie.position.y)
+//
+//        }
+//        else{
+//            zombie.position = CGPoint(x: zombie.position.x - 8,
+//            y: zombie.position.y)
+//        }
+        
+      move(velocity: velocity)
+//        amountToMove(location: touchLocation)
         boundsCheckZombie()
         rotate(sprite: zombie, direction: velocity)
-        print(velocity.length())
-        if(velocity.length() == 0){
-            print("Stopped")
-        }else{
-            print("Moving")
-        }
 
     }
     
@@ -123,14 +168,24 @@ class GameScene: SKScene {
     }
     
     override func didFinishUpdate() {
-        print("Zombie postion \(zombie.position)")
-        print("destinationLocation \(destinationLocation)")
-        if(zombie.position == destinationLocation){
-            stopZombieAnimation()
-        }
-        
+    
     }
-
+    
+    // working
+    
+//    override func didFinishUpdate() {
+//        print(zombie.position.x)
+//        lastPostion = Int(zombie.position.x)
+//        if zombie.position.x == size.width{
+//            moveForward = false
+//        }
+//        if zombie.position.x == 0 {
+//            moveForward = true
+//        }
+//
+//    }
+    
+    
      func createBackground() {
               let backgroundTexture = SKTexture(imageNamed: "background1")
 
@@ -147,8 +202,6 @@ class GameScene: SKScene {
                 addChild(background)
               }
     }
-    
-    
     
     func spawnEnemy() {
         let enemy = SKSpriteNode(imageNamed: "enemy")
@@ -170,24 +223,6 @@ class GameScene: SKScene {
         enemy.run( SKAction.sequence([actionMove, actionMoveDone]))
     }
     
-    func move(sprite: SKSpriteNode, velocity: CGPoint) {
-        let amountToMove = velocity * CGFloat(dt)
-                    print("Amount to move: \(amountToMove)")
-                   zombie.position += amountToMove
-    }
-    
-//    func moveZombieToward(location: CGPoint) {
-//          let offset = CGPoint(x: location.x - zombie.position.x,
-//                          y: location.y - zombie.position.y)
-//          let length = sqrt(
-//                             Double(offset.x * offset.x + offset.y * offset.y))
-//          let direction = CGPoint(x: offset.x / CGFloat(length),
-//                              y: offset.y / CGFloat(length))
-//          velocity = CGPoint(x: direction.x * zombieMovePointsPerSec, y: direction.y * zombieMovePointsPerSec)
-//        }
-    
-    // this is for moving up to particular postion
-    
     func moveZombieToward(location: CGPoint) {
       let offset = CGPoint(x: location.x - zombie.position.x,
                       y: location.y - zombie.position.y)
@@ -196,18 +231,29 @@ class GameScene: SKScene {
       let direction = CGPoint(x: offset.x / CGFloat(length),
                           y: offset.y / CGFloat(length))
       velocity = CGPoint(x: direction.x * zombieMovePointsPerSec, y: direction.y * zombieMovePointsPerSec)
+    }
+    
+    func amountToMove(location : CGPoint){
         
-        
-        
-        let time = length/480
-//
-////                    let amountToMove = velocity * CGFloat(dt)
-////                         zombie.position += amountToMove
-                    let actionMove = SKAction.move(
-                        to: CGPoint(x: location.x, y: location.y),
-                             duration: time)
-                            zombie.run(actionMove)
-        
+        let offset = CGPoint(x: location.x - zombie.position.x,
+                   y: location.y - zombie.position.y)
+       
+        if offset.length()>3{
+            
+            let length = sqrt(
+                                 Double(offset.x * offset.x + offset.y * offset.y))
+            let direction = CGPoint(x: offset.x / CGFloat(length),
+                                  y: offset.y / CGFloat(length))
+            velocity = CGPoint(x: direction.x * zombieMovePointsPerSec, y: direction.y * zombieMovePointsPerSec)
+            let time = length/480
+            
+            let amountToMove = velocity * CGFloat(dt)
+                  zombie.position += amountToMove
+//            let actionMove = SKAction.move(
+//                to: CGPoint(x: location.x, y: location.y),
+//                     duration: time)
+//                    zombie.run(actionMove)
+        }
     }
     
     func rotate(sprite: SKSpriteNode, direction: CGPoint) {
@@ -215,7 +261,12 @@ class GameScene: SKScene {
     atan2(Double(direction.y), Double(direction.x)))
     }
     
-  
+    
+    func move(velocity: CGPoint){
+         let amountToMove = velocity * CGFloat(dt)
+        //     print("Amount to move: \(amountToMove)")
+            zombie.position += amountToMove
+    }
     
     func boundsCheckZombie() {
 //     let bottomLeft = CGPoint.zero
@@ -251,18 +302,7 @@ class GameScene: SKScene {
      shape.lineWidth = 4.0
      addChild(shape)
     }
-
-    func startZombieAnimation() {
-     if zombie.action(forKey: "animation") == nil {
-     zombie.run(
-     SKAction.repeatForever(zombieAnimation),
-     withKey: "animation")
-     }
-    }
-    func stopZombieAnimation() {
-     zombie.removeAction(forKey: "animation")
-    }
+    
     
 }
-
 
