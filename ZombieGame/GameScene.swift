@@ -59,6 +59,8 @@ class GameScene: SKScene {
     
     
     override func didMove(to view: SKView) {
+        
+        print("didmove")
         debugDrawPlayableArea()
         backgroundColor = SKColor.purple
         createBackground()
@@ -69,6 +71,12 @@ class GameScene: SKScene {
          zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5) // default
          addChild(zombie)
 //         zombie.run(SKAction.repeatForever(zombieAnimation))
+        run(SKAction.repeatForever(
+               SKAction.sequence([
+                 SKAction.run(spawnCat),
+                 SKAction.wait(forDuration: 1.0)
+                 ])
+             ))
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -107,7 +115,6 @@ class GameScene: SKScene {
         }else{
             print("Moving")
         }
-
     }
     
     override func didEvaluateActions() {
@@ -123,52 +130,13 @@ class GameScene: SKScene {
     }
     
     override func didFinishUpdate() {
-        print("Zombie postion \(zombie.position)")
-        print("destinationLocation \(destinationLocation)")
         if(zombie.position == destinationLocation){
             stopZombieAnimation()
         }
         
     }
 
-     func createBackground() {
-              let backgroundTexture = SKTexture(imageNamed: "background1")
-
-              for i in 0 ... 1{
-                  let background = SKSpriteNode(texture: backgroundTexture)
-                  background.zPosition = -1
-                  background.anchorPoint = CGPoint(x: 0, y: 0.5)
-                  background.position = CGPoint(x:  (backgroundTexture.size().width * CGFloat(i)) - CGFloat(1 * i), y: size.height/2)
-                let moveLeft = SKAction.moveBy(x: -backgroundTexture.size().width, y: 0, duration: 10)
-                let moveReset = SKAction.moveBy(x: backgroundTexture.size().width, y: 0, duration: 0)
-                let moveLoop = SKAction.sequence([moveLeft, moveReset])
-                let moveForever = SKAction.repeatForever(moveLoop)
-                background.run(moveForever)
-                addChild(background)
-              }
-    }
-    
-    
-    
-    func spawnEnemy() {
-        let enemy = SKSpriteNode(imageNamed: "enemy")
-        
-        let actualY = CGFloat.random(min: enemy.size.height/2, max: size.height - enemy.size.height/2)
-        
-        
-    // Position the monster slightly off-screen along the right edge,
-    // and along a random position along the Y axis as calculated above
-       enemy.position = CGPoint(x: size.width + enemy.size.width/2, y: actualY)
-        addChild(enemy)
-        
-//      let actualDuration = CGFloat.random(min: CGFloat(2.0), max: CGFloat(4.0))
-        
-        // Create the actions
-        let actionMove = SKAction.move(to: CGPoint(x: -enemy.size.width/2, y: actualY),
-                                       duration: TimeInterval(2))
-        let actionMoveDone = SKAction.removeFromParent()
-        enemy.run( SKAction.sequence([actionMove, actionMoveDone]))
-    }
+     
     
     func move(sprite: SKSpriteNode, velocity: CGPoint) {
         let amountToMove = velocity * CGFloat(dt)
@@ -263,6 +231,83 @@ class GameScene: SKScene {
      zombie.removeAction(forKey: "animation")
     }
     
+    
+    
+    
+    func createBackground() {
+                  let backgroundTexture = SKTexture(imageNamed: "background1")
+
+                  for i in 0 ... 1{
+                      let background = SKSpriteNode(texture: backgroundTexture)
+                      background.zPosition = -1
+                      background.anchorPoint = CGPoint(x: 0, y: 0.5)
+                      background.position = CGPoint(x:  (backgroundTexture.size().width * CGFloat(i)) - CGFloat(1 * i), y: size.height/2)
+                    let moveLeft = SKAction.moveBy(x: -backgroundTexture.size().width, y: 0, duration: 10)
+                    let moveReset = SKAction.moveBy(x: backgroundTexture.size().width, y: 0, duration: 0)
+                    let moveLoop = SKAction.sequence([moveLeft, moveReset])
+                    let moveForever = SKAction.repeatForever(moveLoop)
+                    background.run(moveForever)
+                    addChild(background)
+                  }
+        }
+        
+        
+        
+        func spawnEnemy() {
+            let enemy = SKSpriteNode(imageNamed: "enemy")
+            enemy.name = "enemy"
+            let actualY = CGFloat.random(min: enemy.size.height/2, max: size.height - enemy.size.height/2)
+            
+            
+        // Position the monster slightly off-screen along the right edge,
+        // and along a random position along the Y axis as calculated above
+           enemy.position = CGPoint(x: size.width + enemy.size.width/2, y: actualY)
+            addChild(enemy)
+            
+    //      let actualDuration = CGFloat.random(min: CGFloat(2.0), max: CGFloat(4.0))
+            
+            // Create the actions
+            let actionMove = SKAction.move(to: CGPoint(x: -enemy.size.width/2, y: actualY),
+                                           duration: TimeInterval(2))
+            let actionMoveDone = SKAction.removeFromParent()
+            enemy.run( SKAction.sequence([actionMove, actionMoveDone]))
+        }
+        
+        func spawnCat() {
+    
+            
+             let cat = SKSpriteNode(imageNamed:"cat")
+            cat.name = "cat"
+             cat.position = CGPoint(
+            x: CGFloat.random(min: playableRect.minX,
+            max: playableRect.maxX),
+            y: CGFloat.random(min: playableRect.minY,
+            max: playableRect.maxY))
+            cat.setScale(0)
+            cat.zRotation = -π/16
+            addChild(cat)
+            
+            let appear = SKAction.scale(to: 1.0, duration: 0.5)
+//            let wait = SKAction.wait(forDuration: 1.0)
+            let disappear = SKAction.scale(to: 0, duration: 0.5)
+            let removeFromParent = SKAction.removeFromParent()
+            
+            let leftWiggle = SKAction.rotate(byAngle: π/8, duration: 0.5)
+            let rightWiggle = leftWiggle.reversed()
+            let fullWiggle = SKAction.sequence([leftWiggle, rightWiggle])
+            let wiggleWait = SKAction.repeat(fullWiggle, count: 10)
+            
+            let scaleUp = SKAction.scale(by: 1.2, duration: 0.25)
+            let scaleDown = scaleUp.reversed()
+            let fullScale = SKAction.sequence(
+             [scaleUp, scaleDown, scaleUp, scaleDown])
+            let group = SKAction.group([fullScale, fullWiggle])
+            let groupWait = SKAction.repeat(group, count: 10)
+            
+            
+            let actions = [appear, groupWait, disappear, removeFromParent]
+            cat.run(SKAction.sequence(actions))
+    }
 }
 
 
